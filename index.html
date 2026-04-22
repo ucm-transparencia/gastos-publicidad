@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publicidad — UCM Portal de Transparencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#f0f2f5;min-height:100vh;padding:20px;line-height:1.5;color:#3d3d3d}
+.container{max-width:1280px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.1);overflow:hidden}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#b71234 0%,#8b0d27 100%);color:#fff;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.header-text h1{font-size:18px;font-weight:600;line-height:1.25}
+.header-text h1 span{display:block;font-size:12px;font-weight:400;opacity:.75;margin-top:2px}
+.ejercicio-badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:5px 16px;font-size:12px;font-weight:700;letter-spacing:.05em;white-space:nowrap;flex-shrink:0}
+
+/* CONTROLS */
+.controls{padding:12px 32px;background:#fff;border-bottom:2px solid #e5e7eb;display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.ctrl-group{display:flex;flex-direction:column;gap:3px}
+.ctrl-group>label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{padding:7px 16px;border:2px solid #e5e7eb;border-radius:8px;background:#fff;color:#3d3d3d;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap;line-height:1}
+.tab:hover{border-color:#b71234;color:#b71234}
+.tab.active{background:#b71234;border-color:#b71234;color:#fff}
+.export-group{display:flex;gap:7px;margin-left:auto;align-items:flex-end}
+.export-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:none;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit;color:#fff;white-space:nowrap}
+.export-btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.btn-xl{background:#1D6F42}
+
+/* MAIN */
+.main{padding:28px 32px 56px}
+
+/* KPIs */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.kpi{background:#fff;border:1px solid #e5e7eb;border-top:3px solid #b71234;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:all .2s}
+.kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px)}
+.kpi.azul{border-top-color:#2563c6}
+.kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin-bottom:7px}
+.kpi-val{font-family:'DM Serif Display',Georgia,serif;color:#b71234;line-height:1;margin-bottom:4px;font-size:22px}
+.kpi.azul .kpi-val{color:#2563c6}
+.kpi-sub{font-size:11px;color:#6b7280;line-height:1.4}
+
+/* SECTION HEADER */
+.sec-hdr{margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #f5e6ea;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sec-hdr h2{font-family:'DM Serif Display',Georgia,serif;font-size:20px;color:#8b0d27;font-weight:400}
+.sec-meta{font-size:12px;color:#6b7280;font-style:italic}
+
+/* EMPRESA BADGE */
+.empresa-badge{display:inline-flex;align-items:center;gap:8px;background:#fef7f8;border:1px solid #f5a0b5;border-left:4px solid #b71234;border-radius:8px;padding:10px 16px;margin-bottom:18px;font-size:13px;color:#3d3d3d}
+.empresa-badge strong{color:#8b0d27}
+
+/* CATEGORÍA LABEL */
+.cat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin:20px 0 10px;padding:6px 12px;background:#f3f4f6;border-radius:6px;display:inline-block}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #e5e7eb;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:linear-gradient(135deg,#b71234,#8b0d27);color:#fff}
+thead th{padding:11px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+thead th:first-child{text-align:left}
+thead th.r{text-align:right}
+tbody tr{border-bottom:1px solid #e5e7eb;transition:background .2s}
+tbody tr:hover{background:#fef7f8}
+tbody tr:nth-child(even){background:#fafafa}
+tbody tr:nth-child(even):hover{background:#fef7f8}
+tbody tr.total-row{background:linear-gradient(90deg,#fef7f8,#fce8ed);font-weight:700;border-top:2px solid #b71234}
+tbody tr.total-row td{color:#8b0d27}
+tbody tr.total-row:hover{background:linear-gradient(90deg,#fce8ed,#f9d5de)}
+td{padding:10px 14px;vertical-align:middle}
+td.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.bold{font-weight:700}
+.badge-total{display:inline-block;background:#fce8ed;color:#8b0d27;border:1px solid #f5a0b5;border-radius:5px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.iva-muted{color:#6b7280}
+
+/* TIPO PILL */
+.tipo-pill{display:inline-block;border-radius:12px;padding:2px 9px;font-size:10px;font-weight:700;white-space:nowrap;letter-spacing:.03em}
+.tipo-exterior{background:#e8f0fb;color:#2563c6}
+.tipo-digital{background:#fce8ed;color:#8b0d27}
+.tipo-rrss{background:#fff3cd;color:#7d5000}
+.tipo-tv{background:#e8fbf0;color:#166534}
+.tipo-audio{background:#f3e8fb;color:#6b21a8}
+.tipo-otro{background:#f3f4f6;color:#6b7280}
+
+/* PROGRESS BARS */
+.progress-wrap{margin-top:0;margin-bottom:28px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:10px;padding:18px 20px}
+.progress-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin-bottom:12px}
+.prog-item{margin-bottom:10px}
+.prog-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+.prog-label span:first-child{font-size:12px;color:#3d3d3d;font-weight:500}
+.prog-label span:last-child{font-size:11px;color:#6b7280;font-weight:600}
+.prog-bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#b71234,#e0455a);transition:width .85s cubic-bezier(.4,0,.2,1);width:0}
+
+/* CHART */
+.chart-box{background:#f3f4f6;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:28px}
+.chart-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin-bottom:14px}
+
+/* CONTEXT BOX */
+.context-box{background:#e8f0fb;border:1px solid #c0d4f5;border-left:4px solid #2563c6;border-radius:10px;padding:14px 18px;margin-bottom:22px;font-size:13px;line-height:1.6}
+.context-box strong{color:#2563c6}
+
+/* NOTES */
+.notes{margin-top:22px;background:#f8f9fa;border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px}
+.notes h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin-bottom:10px}
+.notes ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.notes li{font-size:12px;color:#6b7280;line-height:1.5}
+.notes li strong{color:#3d3d3d}
+
+/* FOOTER */
+.footer{padding:16px 32px;background:#f0f2f5;border-top:1px solid #e5e7eb;text-align:center;font-size:13px;color:#6b7280}
+.footer a{color:#8b0d27;text-decoration:none;font-weight:600}
+.footer a:hover{text-decoration:underline}
+
+/* RESPONSIVE */
+@media(max-width:900px){.kpi-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){
+  body{padding:8px}
+  .header,.controls,.main{padding-left:16px;padding-right:16px}
+  .header-text h1{font-size:15px}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi-val{font-size:18px!important}
+  table{font-size:12px}
+  td,thead th{padding:7px 8px}
+  .export-group{flex-wrap:wrap}
+}
+@media(max-width:400px){.kpi-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">📣</div>
+      <div class="header-text">
+        <h1>Campañas de Publicidad y Propaganda
+          <span>Portal de Transparencia · Universidad Complutense de Madrid</span>
+        </h1>
+      </div>
+    </div>
+    <span class="ejercicio-badge" id="badgeYear">Ejercicio 2025</span>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>Ejercicio</label>
+      <div class="tabs" id="yearTabs">
+        <button class="tab active" data-year="2025">2025</button>
+        <button class="tab" data-year="2024">2024</button>
+      </div>
+    </div>
+    <div class="export-group">
+      <button class="export-btn btn-xl" id="exportCSV">📥 Exportar CSV</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Total con IVA</div>
+        <div class="kpi-val" id="kpiTotal">—</div>
+        <div class="kpi-sub">Importe total campañas</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Base Neta</div>
+        <div class="kpi-val" id="kpiNeto">—</div>
+        <div class="kpi-sub" id="kpiNetoPct">—</div>
+      </div>
+      <div class="kpi azul">
+        <div class="kpi-label">IVA (21%)</div>
+        <div class="kpi-val" id="kpiIVA">—</div>
+        <div class="kpi-sub" id="kpiIVAPct">—</div>
+      </div>
+      <div class="kpi azul">
+        <div class="kpi-label">Número de soportes</div>
+        <div class="kpi-val" id="kpiSoportes">—</div>
+        <div class="kpi-sub">Contratados con Mercadotecnia MET</div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN: Distribución por soporte -->
+    <div class="sec-hdr">
+      <h2 id="secTitle">Campaña de Publicidad Institucional 2025</h2>
+      <span class="sec-meta">Empresa adjudicataria: Mercadotecnia MET, S.L. · Desglose por soporte</span>
+    </div>
+
+    <div class="empresa-badge">
+      <span>🏢</span>
+      Empresa adjudicataria: <strong>MERCADOTECNIA MET, S.L.</strong> · Contrato de servicios de publicidad institucional
+    </div>
+
+    <!-- CONTEXT -->
+    <div class="context-box" id="contextBox">
+      El gasto previsto en publicidad institucional para el ejercicio <strong id="ctxYear">2025</strong>
+      asciende a <strong id="ctxTotal">102.269,20 €</strong> (IVA incluido), con una base neta de
+      <strong id="ctxNeto">84.520,00 €</strong> más <strong id="ctxIVA">17.749,20 €</strong> de IVA al 21%.
+      La campaña cubre soportes de exterior, digital, redes sociales, televisión autonómica y prensa digital.
+    </div>
+
+    <!-- BARRAS DE DISTRIBUCIÓN -->
+    <div class="progress-wrap">
+      <div class="progress-title">Distribución del gasto neto por soporte (mayor a menor)</div>
+      <div id="progBars"></div>
+    </div>
+
+    <!-- GRÁFICO -->
+    <div class="chart-box">
+      <div class="chart-title">Gasto neto por tipo de soporte (€)</div>
+      <canvas id="chartSoportes" height="100"></canvas>
+    </div>
+
+    <!-- TABLA DETALLE -->
+    <div class="table-wrap">
+      <table id="mainTable" aria-label="Detalle de soportes publicitarios contratados">
+        <thead>
+          <tr>
+            <th>Soporte</th>
+            <th class="r">Neto (€)</th>
+            <th class="r">IVA 21% (€)</th>
+            <th class="r">Total (€)</th>
+            <th class="r">% s/ neto</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- NOTAS -->
+    <div class="notes">
+      <h3>Notas metodológicas</h3>
+      <ul>
+        <li><strong>Empresa adjudicataria:</strong> Mercadotecnia MET, S.L., empresa especializada en planificación de medios y compra de espacios publicitarios.</li>
+        <li><strong>IVA:</strong> Todos los importes se calculan con IVA al 21% sobre la base neta.</li>
+        <li><strong>RRSS:</strong> Incluye campañas en TikTok, Instagram y YouTube para captación de estudiantes.</li>
+        <li><strong>Soportes de exterior:</strong> Pantallas Callao, Mupis de cercanías (Sol, Atocha, Príncipe Pío) y autobuses EMT e interurbanos.</li>
+        <li>Los datos corresponden al gasto previsto publicado en el Portal de Transparencia de la UCM.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Datos facilitados por la
+    <a href="https://www.ucm.es/directorio/?eid=962" target="_blank" rel="noopener">Vicegerencia económica</a>
+    &nbsp;·&nbsp;
+    <a href="https://www.ucm.es/portaldetransparencia/publicidad" target="_blank" rel="noopener">Portal de Transparencia UCM ↗</a>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ── PALETA ──────────────────────────────────────── */
+const C = { rojo:'#b71234', rojo2:'#d94060', azul:'#2563c6', gris:'#6b7280', gris2:'#e5e7eb', blanco:'#ffffff' };
+
+/* ── DATOS REALES DE LA UCM ──────────────────────── */
+const datasets = {
+  2025: [
+    { soporte:'Pantallas Callao',                          neto:14696.00,  iva:3086.16,  total:17782.16 },
+    { soporte:'Pantalla Digital Pº Moret',                 neto:1540.00,   iva:323.40,   total:1863.40  },
+    { soporte:'Autobús EMT C1',                            neto:3850.00,   iva:808.50,   total:4658.50  },
+    { soporte:'Autobús Interurbano 441 y 286',             neto:2545.00,   iva:534.45,   total:3079.45  },
+    { soporte:'Mupis Cercanías Sol, Atocha y Príncipe Pío',neto:4352.00,   iva:913.92,   total:5265.92  },
+    { soporte:'RRSS (TikTok + Instagram + YouTube)',       neto:16872.00,  iva:3543.12,  total:20415.12 },
+    { soporte:'Telemadrid + La Otra',                      neto:4900.00,   iva:1029.00,  total:5929.00  },
+    { soporte:'Castilla-La Mancha TV',                     neto:2530.00,   iva:531.30,   total:3061.30  },
+    { soporte:'Castilla y León TV',                        neto:2850.00,   iva:598.50,   total:3448.50  },
+    { soporte:'TV Canaria',                                neto:2320.00,   iva:487.20,   total:2807.20  },
+    { soporte:'YAQ.es + Notasdecorte.es',                  neto:2275.00,   iva:477.75,   total:2752.75  },
+    { soporte:'ElPais.com',                                neto:5600.00,   iva:1176.00,  total:6776.00  },
+    { soporte:'Marca.com',                                 neto:4920.00,   iva:1033.20,  total:5953.20  },
+    { soporte:'ABC.es',                                    neto:4680.00,   iva:982.80,   total:5662.80  },
+    { soporte:'El Confidencial',                           neto:3680.00,   iva:772.80,   total:4452.80  },
+    { soporte:'El Mundo',                                  neto:3130.00,   iva:657.30,   total:3787.30  },
+    { soporte:'Vocento News',                              neto:3780.00,   iva:793.80,   total:4573.80  },
+  ],
+  2024: [
+    { soporte:'ElevenLabs',                                neto:230.00,    iva:48.30,    total:278.30   },
+    { soporte:'Pantallas Callao (campaña 1)',               neto:7848.00,   iva:1648.08,  total:9496.08  },
+    { soporte:'Pantalla Digital Pº Moret',                 neto:850.00,    iva:178.50,   total:1028.50  },
+    { soporte:'YAQ.es + Notasdecorte.es',                  neto:2275.00,   iva:477.75,   total:2752.75  },
+    { soporte:'RRSS (TikTok + Instagram)',                  neto:13000.00,  iva:2730.00,  total:15730.00 },
+    { soporte:'Mupis Aeropuerto Barajas T1, T2 y T3',      neto:6980.00,   iva:1465.80,  total:8445.80  },
+    { soporte:'Pantallas Callao (campaña 2)',               neto:7848.00,   iva:1648.08,  total:9496.08  },
+    { soporte:'Creatividad y adaptaciones',                 neto:2500.00,   iva:525.00,   total:3025.00  },
+    { soporte:'ElPais.com',                                neto:2760.00,   iva:579.60,   total:3339.60  },
+    { soporte:'Marca.com',                                 neto:2700.00,   iva:567.00,   total:3267.00  },
+    { soporte:'El Confidencial',                           neto:1840.00,   iva:386.40,   total:2226.40  },
+    { soporte:'Audio Digital Podcast',                     neto:5500.00,   iva:1155.00,  total:6655.00  },
+    { soporte:'RRSS (TikTok + Instagram + YouTube)',       neto:21700.00,  iva:4557.00,  total:26257.00 },
+    { soporte:'Audio Digital Cuña Online',                 neto:3788.00,   iva:795.48,   total:4583.48  },
+    { soporte:'Mupis Cercanías Sol, Atocha y Príncipe Pío',neto:4700.00,   iva:987.00,   total:5687.00  },
+  ],
+};
+
+/* Categorización automática por soporte */
+function getTipo(soporte) {
+  const s = soporte.toLowerCase();
+  if (s.includes('rrss') || s.includes('tiktok') || s.includes('instagram') || s.includes('youtube')) return 'rrss';
+  if (s.includes('tv') || s.includes('telemadrid') || s.includes('canaria') || s.includes('castilla')) return 'tv';
+  if (s.includes('callao') || s.includes('pantalla') || s.includes('mupis') || s.includes('autobús') || s.includes('autobus') || s.includes('barajas') || s.includes('moret')) return 'exterior';
+  if (s.includes('podcast') || s.includes('cuña') || s.includes('audio') || s.includes('eleven')) return 'audio';
+  if (s.includes('.com') || s.includes('.es') || s.includes('vocento') || s.includes('confidencial') || s.includes('mundo') || s.includes('marca') || s.includes('abc') || s.includes('pais') || s.includes('yaq') || s.includes('notas')) return 'digital';
+  return 'otro';
+}
+
+const TIPO_LABELS = { exterior:'Exterior', digital:'Prensa Digital', rrss:'Redes Sociales', tv:'TV Autonómica', audio:'Audio Digital', otro:'Otros' };
+const TIPO_COLORS = { exterior:C.rojo, digital:'#d97706', rrss:'#7c3aed', tv:'#059669', audio:'#db2777', otro:C.gris };
+
+/* ── ESTADO ──────────────────────────────────────── */
+let state = { year: 2025 };
+let chartInstance = null;
+
+/* ── FORMATEO ──────────────────────────────────────── */
+const fmtEur = n => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+const fmtEurShort = n => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/* ── RENDER ──────────────────────────────────────── */
+function render() {
+  const rows = datasets[state.year];
+  const totalNeto  = rows.reduce((s,r) => s + r.neto,  0);
+  const totalIVA   = rows.reduce((s,r) => s + r.iva,   0);
+  const totalTotal = rows.reduce((s,r) => s + r.total, 0);
+
+  // Badge año
+  document.getElementById('badgeYear').textContent = `Ejercicio ${state.year}`;
+
+  // KPIs
+  document.getElementById('kpiTotal').textContent    = fmtEur(totalTotal);
+  document.getElementById('kpiNeto').textContent     = fmtEur(totalNeto);
+  document.getElementById('kpiNetoPct').textContent  = `${((totalNeto/totalTotal)*100).toFixed(1)}% del total con IVA`;
+  document.getElementById('kpiIVA').textContent      = fmtEur(totalIVA);
+  document.getElementById('kpiIVAPct').textContent   = `21% sobre base neta`;
+  document.getElementById('kpiSoportes').textContent = rows.length;
+
+  // Título sección
+  document.getElementById('secTitle').textContent = `Campaña de Publicidad Institucional ${state.year}`;
+
+  // Contexto
+  document.getElementById('ctxYear').textContent  = state.year;
+  document.getElementById('ctxTotal').textContent = fmtEur(totalTotal);
+  document.getElementById('ctxNeto').textContent  = fmtEur(totalNeto);
+  document.getElementById('ctxIVA').textContent   = fmtEur(totalIVA);
+
+  // Barras de distribución (top 8 por neto)
+  const sorted = [...rows].sort((a,b) => b.neto - a.neto);
+  const top = sorted.slice(0, 8);
+  const maxNeto = top[0].neto;
+  document.getElementById('progBars').innerHTML = top.map(r => {
+    const pct = (r.neto / maxNeto * 100).toFixed(1);
+    const pctTotal = (r.neto / totalNeto * 100).toFixed(1);
+    return `
+      <div class="prog-item">
+        <div class="prog-label">
+          <span>${r.soporte}</span>
+          <span>${fmtEur(r.neto)} &nbsp;(${pctTotal}%)</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" data-w="${pct}"></div></div>
+      </div>`;
+  }).join('');
+  // Animar
+  setTimeout(() => {
+    document.querySelectorAll('.prog-fill').forEach(el => {
+      const w = el.dataset.w; el.style.width = '0';
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.width = w + '%'; }));
+    });
+  }, 50);
+
+  // Gráfico por categoría
+  renderChart(rows, totalNeto);
+
+  // Tabla
+  document.getElementById('tbody').innerHTML = rows.map(r => {
+    const pct = (r.neto / totalNeto * 100).toFixed(1);
+    const tipo = getTipo(r.soporte);
+    return `<tr>
+      <td>${r.soporte} &nbsp;<span class="tipo-pill tipo-${tipo}">${TIPO_LABELS[tipo]}</span></td>
+      <td class="r bold">${fmtEurShort(r.neto)}</td>
+      <td class="r iva-muted">${fmtEurShort(r.iva)}</td>
+      <td class="r">${fmtEurShort(r.total)}</td>
+      <td class="r">${pct}%</td>
+    </tr>`;
+  }).join('') + `
+  <tr class="total-row">
+    <td class="bold">TOTAL</td>
+    <td class="r"><span class="badge-total">${fmtEurShort(totalNeto)}</span></td>
+    <td class="r iva-muted">${fmtEurShort(totalIVA)}</td>
+    <td class="r"><span class="badge-total">${fmtEurShort(totalTotal)}</span></td>
+    <td class="r bold">100%</td>
+  </tr>`;
+}
+
+function renderChart(rows, totalNeto) {
+  // Agrupar por tipo
+  const groups = {};
+  rows.forEach(r => {
+    const t = getTipo(r.soporte);
+    groups[t] = (groups[t] || 0) + r.neto;
+  });
+  const labels = Object.keys(groups).map(k => TIPO_LABELS[k]);
+  const values = Object.keys(groups).map(k => groups[k]);
+  const colors = Object.keys(groups).map(k => TIPO_COLORS[k]);
+
+  if (chartInstance) chartInstance.destroy();
+  const ctx = document.getElementById('chartSoportes').getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Gasto neto (€)',
+        data: values,
+        backgroundColor: colors,
+        borderRadius: 7,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      animation: { duration: 800, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${fmtEur(ctx.raw)}  (${(ctx.raw/totalNeto*100).toFixed(1)}% del total neto)`,
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 12, family:"'DM Sans',sans-serif" } } },
+        y: {
+          grid: { color: '#e5e7eb' },
+          ticks: {
+            font: { size: 11, family:"'DM Sans',sans-serif" },
+            callback: v => v.toLocaleString('es-ES') + ' €'
+          },
+          title: { display: true, text: 'Importe neto (€)', font: { size: 11, family:"'DM Sans',sans-serif" }, color: C.gris }
+        }
+      }
+    }
+  });
+}
+
+/* ── EVENTOS ──────────────────────────────────────── */
+document.getElementById('yearTabs').addEventListener('click', e => {
+  const btn = e.target.closest('[data-year]');
+  if (!btn) return;
+  state.year = parseInt(btn.dataset.year);
+  document.querySelectorAll('#yearTabs .tab').forEach(t =>
+    t.classList.toggle('active', parseInt(t.dataset.year) === state.year));
+  render();
+});
+
+document.getElementById('exportCSV').addEventListener('click', () => {
+  const rows = datasets[state.year];
+  const totalNeto  = rows.reduce((s,r) => s + r.neto,  0);
+  const totalIVA   = rows.reduce((s,r) => s + r.iva,   0);
+  const totalTotal = rows.reduce((s,r) => s + r.total, 0);
+  const headers = ['Soporte','Tipo','Importe Neto (€)','IVA 21% (€)','Total con IVA (€)','% s/ neto'];
+  const dataRows = rows.map(r => [
+    r.soporte,
+    TIPO_LABELS[getTipo(r.soporte)],
+    r.neto.toFixed(2),
+    r.iva.toFixed(2),
+    r.total.toFixed(2),
+    (r.neto / totalNeto * 100).toFixed(1) + '%'
+  ]);
+  dataRows.push(['TOTAL','',totalNeto.toFixed(2),totalIVA.toFixed(2),totalTotal.toFixed(2),'100%']);
+  const csv = [
+    [`UCM - Gastos de Publicidad Institucional ${state.year}`],
+    ['Fuente: Portal de Transparencia UCM - Empresa: Mercadotecnia MET S.L.'],
+    [],
+    headers,
+    ...dataRows
+  ].map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = `UCM_Publicidad_${state.year}.csv`;
+  a.click();
+});
+
+// Init
+render();
+</script>
+</body>
+</html>
